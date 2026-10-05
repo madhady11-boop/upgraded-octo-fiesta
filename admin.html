@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#04060d">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة التحكم المستقلة | دوري الحدود الرياضي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/glass.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230b1120' stroke='%23f7c14b' stroke-width='5'/%3E%3Cpath d='M50 24 L74 36 L74 58 C74 72 50 84 50 84 C50 84 26 72 26 58 L26 36 Z' fill='none' stroke='%23f7c14b' stroke-width='5'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true">
+    <div class="bg-blob b1"></div>
+    <div class="bg-blob b2"></div>
+    <div class="bg-blob b3"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-noise"></div>
+</div>
+
+<!-- ============================== بوابة الدخول ============================ -->
+<div id="gate" class="overlay" style="z-index:80">
+    <div class="modal narrow glass-deep glow-top">
+        <div class="modal-body" style="gap:16px;text-align:center">
+            <div style="display:flex;justify-content:center">
+                <span class="brand-mark" id="gateCrest" style="width:54px;height:54px;border-radius:18px"></span>
+            </div>
+            <div>
+                <h2 style="font-size:15px">لوحة التحكم المستقلة</h2>
+                <p class="card-sub" style="margin-top:5px">أدخل رمز المرور السري للجنة المنظمة للدخول</p>
+            </div>
+            <div class="pin-dots" id="gateDots"></div>
+            <input type="password" inputmode="numeric" maxlength="8" class="inp" id="gateInput" placeholder="• • • •" style="text-align:center;letter-spacing:.5em;font-size:18px;font-family:Outfit">
+            <div class="keypad" id="gateKeypad"></div>
+            <button class="btn btn-gold btn-block btn-lg" id="gateConfirm">دخول اللوحة</button>
+            <div class="card-sub" id="gateHint">الرمز الافتراضي: 2016 — يمكن تغييره لاحقاً من الإعدادات</div>
+            <a class="btn btn-ghost btn-block" href="index.html">العودة إلى الموقع العام</a>
+        </div>
+    </div>
+</div>
+
+<!-- =============================== الشريط العلوي ========================== -->
+<header class="topbar" id="adminTopbar" hidden>
+    <div class="topbar-inner">
+        <div class="brand">
+            <span class="brand-mark" id="admBrandMark"></span>
+            <span>
+                <span class="brand-title">لوحة التحكم المستقلة</span>
+                <span class="brand-sub" id="admBrandSub">دوري الحدود الرياضي</span>
+            </span>
+        </div>
+        <div class="row" style="gap:8px">
+            <span class="badge badge-plain" id="admCloudBadge">وضع محلي</span>
+            <button class="tool-btn" id="admSyncBtn" title="حفظ ومزامنة الآن">↻</button>
+            <a class="tool-btn" href="index.html" title="الموقع العام">↗</a>
+            <button class="tool-btn" id="admLogout" title="خروج">⏻</button>
+        </div>
+    </div>
+</header>
+
+<!-- ================================= اللوحة =============================== -->
+<div class="admin-shell" id="adminApp" hidden>
+
+    <aside class="side-nav glass glow-top" id="sideNav"></aside>
+
+    <main class="stack">
+
+        <!-- ---------------------------- نظرة عامة --------------------------- -->
+        <section id="sec-overview" class="admin-section active">
+            <div class="grid-4" id="admKpis"></div>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head">
+                    <div class="card-title" id="ovTitle">حالة النظام والمزامنة</div>
+                    <span class="card-sub">Firestore + تخزين محلي</span>
+                </div>
+                <div class="card-pad stack-sm">
+                    <div class="row-between">
+                        <div class="row" style="gap:9px"><span class="dot-status" id="ovDot"></span>
+                            <span style="font-size:12px;font-weight:700" id="ovCloudText">—</span></div>
+                        <div class="row" style="gap:7px">
+                            <button class="btn btn-sm btn-gold" id="ovSyncNow">مزامنة الآن</button>
+                            <button class="btn btn-sm" id="ovReconnect">إعادة الاتصال</button>
+                        </div>
+                    </div>
+                    <div class="mini-note" id="ovCloudHelp"></div>
+                </div>
+            </div>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">اختصارات سريعة</div></div>
+                <div class="card-pad grid-2" id="admQuick"></div>
+            </div>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title" id="ovFeedTitle">أحدث النشاطات</div></div>
+                <div id="admActivity"></div>
+            </div>
+        </section>
+
+        <!-- ------------------------------ المباريات -------------------------- -->
+        <section id="sec-matches" class="admin-section">
+            <form class="glass glow-top" id="matchForm" style="overflow:hidden">
+                <div class="card-head">
+                    <div class="card-title" id="mfTitle">تسجيل مباراة جديدة</div>
+                    <div class="row" style="gap:7px">
+                        <button type="button" class="btn btn-sm" id="mfReset">جديد</button>
+                        <button type="submit" class="btn btn-sm btn-gold" id="mfSubmit">حفظ المباراة</button>
+                    </div>
+                </div>
+                <div class="card-pad stack">
+                    <input type="hidden" id="mf-id">
+                    <div class="grid-3">
+                        <div class="field">
+                            <label>الدرجة</label>
+                            <select class="inp" id="mf-division"></select>
+                        </div>
+                        <div class="field">
+                            <label>الجولة</label>
+                            <input type="number" class="inp" id="mf-round" value="1" min="1" max="40">
+                        </div>
+                        <div class="field">
+                            <label>حالة المباراة</label>
+                            <select class="inp" id="mf-status">
+                                <option value="NS">لم تبدأ بعد</option>
+                                <option value="LIVE">مباشر الآن</option>
+                                <option value="FT">انتهت</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="field">
+                            <label>التاريخ</label>
+                            <input type="date" class="inp" id="mf-date">
+                        </div>
+                        <div class="field">
+                            <label>التوقيت</label>
+                            <input type="text" class="inp" id="mf-time" placeholder="09:45 م">
+                        </div>
+                        <div class="field">
+                            <label>الملعب</label>
+                            <input type="text" class="inp" id="mf-venue" placeholder="ملعب الحدود الرئيسي">
+                        </div>
+                    </div>
+
+                    <div class="glass-flat" style="padding:12px">
+                        <div class="grid-3" style="align-items:end">
+                            <div class="field">
+                                <label>المستضيف</label>
+                                <div class="row" style="gap:9px"><span id="mf-homeCrest"></span>
+                                    <select class="inp" id="mf-home"></select></div>
+                            </div>
+                            <div class="field">
+                                <label>النتيجة (المستضيف : الزائر)</label>
+                                <div class="row" style="gap:8px">
+                                    <input type="number" class="inp" id="mf-hs" value="0" min="0" style="text-align:center">
+                                    <span style="color:var(--txt-3)">:</span>
+                                    <input type="number" class="inp" id="mf-as" value="0" min="0" style="text-align:center">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>الزائر</label>
+                                <div class="row" style="gap:9px"><span id="mf-awayCrest"></span>
+                                    <select class="inp" id="mf-away"></select></div>
+                            </div>
+                        </div>
+                        <div class="field" style="margin-top:10px;max-width:220px">
+                            <label>الدقيقة الحالية (للمباريات المباشرة)</label>
+                            <input type="number" class="inp" id="mf-minute" min="1" max="120" placeholder="65">
+                        </div>
+                    </div>
+
+                    <div class="glass-flat" style="padding:12px">
+                        <div class="row-between" style="margin-bottom:9px">
+                            <div class="card-title" id="mfEventsTitle">أحداث اللقاء</div>
+                            <button type="button" class="btn btn-sm" id="mf-addEvent">+ إضافة حدث</button>
+                        </div>
+                        <div id="mf-events" class="stack-sm"></div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head">
+                    <div class="card-title">كل المباريات</div>
+                    <div class="row" style="gap:7px">
+                        <select class="inp" id="ml-filterDiv" style="padding:6px 28px 6px 10px;font-size:11.5px"></select>
+                        <input class="inp" id="ml-search" placeholder="بحث باسم الفريق" style="padding:6px 10px;font-size:11.5px;max-width:190px">
+                    </div>
+                </div>
+                <div id="matchList"></div>
+            </div>
+        </section>
+
+        <!-- --------------------------- الفرق والشعارات ---------------------- -->
+        <section id="sec-teams" class="admin-section">
+            <div class="glass glow-top card-pad">
+                <div class="row-between">
+                    <div>
+                        <div class="card-title">شعارات الفرق</div>
+                        <div class="card-sub">ارفع صورة الشعار لكل فريق (PNG بخلفية شفافة يفضّل) — تُضغط تلقائياً وتُرفع للسحابة</div>
+                    </div>
+                    <div class="row" style="gap:7px">
+                        <input class="inp" id="newTeamName" placeholder="اسم النادي الجديد" style="max-width:190px">
+                        <button class="btn btn-sm btn-gold" id="btnAddTeam">+ إضافة نادٍ</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cards" id="teamsGrid"></div>
+        </section>
+
+        <!-- ---------------------------- اللاعبون ---------------------------- -->
+        <section id="sec-players" class="admin-section">
+            <div class="glass glow-top card-pad">
+                <div class="row-between">
+                    <div>
+                        <div class="card-title">صور اللاعبين وبياناتهم</div>
+                        <div class="card-sub" id="playersCount">—</div>
+                    </div>
+                    <div class="row" style="gap:7px;flex-wrap:wrap">
+                        <select class="inp" id="pl-teamFilter" style="max-width:210px"></select>
+                        <input class="inp" id="pl-search" placeholder="بحث باسم اللاعب" style="max-width:180px">
+                        <button class="btn btn-sm btn-gold" id="btnAddPlayer">+ لاعب جديد</button>
+                    </div>
+                </div>
+            </div>
+            <div class="glass glow-top" style="overflow:hidden">
+                <div id="playersList"></div>
+            </div>
+        </section>
+
+        <!-- ---------------------------- التشكيلات --------------------------- -->
+        <section id="sec-lineups" class="admin-section">
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head">
+                    <div class="card-title">محرر التشكيلات (بالخطط الجاهزة)</div>
+                    <span class="badge badge-gold" id="luBadge">تشكيلة المباراة</span>
+                </div>
+                <div class="card-pad stack">
+                    <div class="grid-3">
+                        <div class="field">
+                            <label>نوع التشكيلة</label>
+                            <select class="inp" id="lu-scope">
+                                <option value="match">تشكيلة مباراة (تُعرض في تفاصيل اللقاء)</option>
+                                <option value="team">التشكيلة الافتراضية لفريق</option>
+                            </select>
+                        </div>
+                        <div class="field" id="luMatchField">
+                            <label>المباراة</label>
+                            <select class="inp" id="lu-match"></select>
+                        </div>
+                        <div class="field hidden" id="luTeamField">
+                            <label>الفريق</label>
+                            <select class="inp" id="lu-team"></select>
+                        </div>
+                        <div class="field">
+                            <label>الفريق المستهدف</label>
+                            <select class="inp" id="lu-side">
+                                <option value="home">المستضيف</option>
+                                <option value="away">الزائر</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>الخطة التكتيكية</label>
+                            <select class="inp" id="lu-formation"></select>
+                        </div>
+                    </div>
+                    <div class="row" style="gap:7px;flex-wrap:wrap">
+                        <button class="btn btn-sm btn-cyan" id="lu-auto">توليد تلقائي من القائمة</button>
+                        <button class="btn btn-sm" id="lu-clear">تفريغ الخانات</button>
+                        <button class="btn btn-sm btn-gold" id="lu-save">حفظ التشكيلة</button>
+                        <button class="btn btn-sm" id="lu-resetTeam">حذف تشكيلة المباراة (رجوع للافتراضية)</button>
+                    </div>
+                    <div class="mini-note" id="lu-help"></div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="align-items:start">
+                <div class="glass glow-top card-pad" id="luPitchWrap"></div>
+                <div class="glass glow-top" style="overflow:hidden">
+                    <div class="card-head"><div class="card-title">خانات التشكيلة</div>
+                        <span class="card-sub" id="luSlotCount">—</span></div>
+                    <div class="card-pad stack-sm" id="luSlots"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ----------------------------- الانضباط -------------------------- -->
+        <section id="sec-discipline" class="admin-section">
+            <form class="glass glow-top" id="sanctionForm" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">إصدار عقوبة وخصم نقاط</div>
+                    <button class="btn btn-sm btn-rose" type="submit">تطبيق العقوبة</button></div>
+                <div class="card-pad grid-3">
+                    <div class="field"><label>الفريق</label><select class="inp" id="sf-team"></select></div>
+                    <div class="field"><label>النقاط المخصومة</label><input type="number" class="inp" id="sf-points" value="3" min="0" max="20"></div>
+                    <div class="field"><label>التاريخ</label><input type="date" class="inp" id="sf-date"></div>
+                    <div class="field" style="grid-column:1 / -1"><label>سبب العقوبة</label>
+                        <input class="inp" id="sf-reason" placeholder="مثال: إشراك لاعب غير مسجل أو مخالفة اللائحة"></div>
+                </div>
+            </form>
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">سجل العقوبات</div></div>
+                <div id="sanctionList"></div>
+            </div>
+        </section>
+
+        <!-- --------------------------- الانتقالات -------------------------- -->
+        <section id="sec-transfers" class="admin-section">
+            <form class="glass glow-top" id="transferForm" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">توثيق انتقال أو اعتزال</div>
+                    <button class="btn btn-sm btn-emerald" type="submit">نشر في السوق</button></div>
+                <div class="card-pad grid-3">
+                    <div class="field"><label>اسم اللاعب</label><input class="inp" id="tf-player" required></div>
+                    <div class="field"><label>نوع العملية</label>
+                        <select class="inp" id="tf-type">
+                            <option value="transfer">انتقال رسمي</option>
+                            <option value="retirement">اعتزال رسمي</option>
+                        </select></div>
+                    <div class="field"><label>التاريخ</label><input type="date" class="inp" id="tf-date"></div>
+                    <div class="field"><label>من نادي</label><input class="inp" id="tf-from" required></div>
+                    <div class="field"><label>إلى نادي</label><input class="inp" id="tf-to" required></div>
+                    <div class="field"><label>قيمة الصفقة</label><input class="inp" id="tf-fee" placeholder="انتقال حر / مبلغ رمزي"></div>
+                    <div class="field" style="grid-column:1 / -1"><label>ملاحظات</label>
+                        <input class="inp" id="tf-note" placeholder="تفاصيل إضافية عن الاتفاق"></div>
+                </div>
+            </form>
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">سجل العمليات</div></div>
+                <div id="transferList"></div>
+            </div>
+        </section>
+
+        <!-- ---------------------------- الإعدادات -------------------------- -->
+        <section id="sec-settings" class="admin-section">
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">هوية الدوري</div>
+                    <button class="btn btn-sm btn-gold" id="se-save">حفظ الإعدادات</button></div>
+                <div class="card-pad stack">
+                    <div class="grid-2">
+                        <div class="field"><label>اسم الدوري</label><input class="inp" id="se-league"></div>
+                        <div class="field"><label>الموسم</label><input class="inp" id="se-season"></div>
+                        <div class="field" style="grid-column:1 / -1"><label>الوصف المختصر</label>
+                            <input class="inp" id="se-tagline"></div>
+                        <div class="field"><label>الجهة المنظمة</label><input class="inp" id="se-organizer"></div>
+                        <div class="field"><label>رمز مرور اللوحة</label><input class="inp" id="se-pin" placeholder="4 إلى 8 أرقام"></div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="field"><label>احتمال فوز المستضيف</label><input type="number" step="0.01" class="inp" id="se-oddH"></div>
+                        <div class="field"><label>احتمال التعادل</label><input type="number" step="0.01" class="inp" id="se-oddD"></div>
+                        <div class="field"><label>احتمال فوز الزائر</label><input type="number" step="0.01" class="inp" id="se-oddA"></div>
+                    </div>
+                    <div class="row-between">
+                        <div><div class="card-title" style="font-size:12px">استكمال قوائم الفرق تلقائياً</div>
+                            <div class="card-sub">توليد لاعبين لأي فريق قائمته ناقصة عن 15 لاعباً</div></div>
+                        <button class="switch" id="se-autoSquads" type="button" aria-label="تفعيل"></button>
+                    </div>
+                    <button class="btn btn-cyan" id="se-reseed">استكمال القوائم الآن لكل الفرق</button>
+                </div>
+            </div>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">شعار وبانر الدوري</div></div>
+                <div class="card-pad grid-2">
+                    <div class="stack-sm">
+                        <div class="upload-tile" id="se-crestTile">
+                            <span class="u-label">شعار الدوري</span>
+                            <span class="u-hint">اضغط للرفع (مربّع)</span>
+                        </div>
+                        <button class="btn btn-sm" id="se-crestClear">إزالة الشعار</button>
+                    </div>
+                    <div class="stack-sm">
+                        <div class="upload-tile" id="se-bannerTile" style="min-height:150px">
+                            <span class="u-label">بانر الصفحة الرئيسية</span>
+                            <span class="u-hint">صورة عريضة (1200×500 مناسبة)</span>
+                        </div>
+                        <button class="btn btn-sm" id="se-bannerClear">إزالة البانر</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass glow-top" style="overflow:hidden">
+                <div class="card-head"><div class="card-title">النسخ الاحتياطي والصيانة</div></div>
+                <div class="card-pad stack-sm">
+                    <div class="row" style="gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-sm" id="se-export">تصدير JSON</button>
+                        <button class="btn btn-sm" id="se-importBtn">استيراد JSON</button>
+                        <input type="file" id="se-import" accept="application/json" class="hidden">
+                        <button class="btn btn-sm btn-rose" id="se-reset">إعادة تعيين البيانات الأولية</button>
+                    </div>
+                    <div class="mini-note" id="se-stats"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<nav class="nav-bottom" id="adminBottomNav" hidden></nav>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
