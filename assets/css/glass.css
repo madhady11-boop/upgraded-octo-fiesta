@@ -1072,8 +1072,8 @@ table.tbl tbody tr:hover {
     -webkit-backdrop-filter: blur(8px);
     z-index: 3;
 }
-.pitch-team-label.top { top: 8px; }
-.pitch-team-label.bottom { bottom: 8px; }
+.pitch-team-label.top { top: 5px; }
+.pitch-team-label.bottom { bottom: 5px; }
 
 .marker {
     position: absolute;

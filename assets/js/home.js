@@ -482,9 +482,20 @@
             return '<div class="glass empty">' + I('users') + '<span>لم تُسجَّل التشكيلات بعد — يمكن إضافتها من لوحة التحكم</span></div>';
         }
         const srcH = S.lineupSource(m.id, 'home'), srcA = S.lineupSource(m.id, 'away');
-        const note = (srcH === 'default' || srcA === 'default')
-            ? '<div class="mini-note">' + I('info') + ' التشكيلة المعروضة هي <b>التشكيلة الافتراضية</b> للفريق (خطة ' + UI.esc((hl && hl.formation) || '-') + '). يمكن للجنة الفنية تثبيت تشكيلة المباراة من لوحة التحكم.</div>'
-            : '<div class="mini-note">' + I('check') + ' تشكيلة معتمدة من اللجنة الفنية لهذه المباراة.</div>';
+        const hn = home ? home.name : 'المستضيف', an = away ? away.name : 'الزائر';
+        let note;
+        if (srcH === 'match' && srcA === 'match') {
+            note = '<div class="mini-note">' + I('check') + ' تشكيلتان <b>معتمدتان</b> من اللجنة الفنية لهذه المباراة.</div>';
+        } else if (srcH === 'default' && srcA === 'default') {
+            note = '<div class="mini-note">' + I('info') + ' المعروض هو <b>التشكيلة الافتراضية</b> للفريقين (خطتا ' +
+                UI.esc((hl && hl.formation) || '-') + ' و ' + UI.esc((al && al.formation) || '-') +
+                '). يمكن للجنة الفنية تثبيت تشكيلة معتمدة من لوحة التحكم.</div>';
+        } else {
+            note = '<div class="mini-note">' + I('check') + ' تشكيلة <b>' +
+                UI.esc(srcH === 'match' ? hn : an) + '</b> <b>معتمدة</b> لهذه المباراة، وتشكيلة <b>' +
+                UI.esc(srcH === 'match' ? an : hn) + '</b> هي الافتراضية للفريق (خطة ' +
+                UI.esc(srcH === 'match' ? (al && al.formation) || '-' : (hl && hl.formation) || '-') + ').</div>';
+        }
 
         return note +
             UI.pitchMatch(home, away, hl, al, { height: 560, cls: 'compact-mobile' }) +

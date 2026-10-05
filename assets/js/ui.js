@@ -329,11 +329,11 @@
     /* ------------------------------- الملعب ------------------------------- */
     function rowY(side, index, total) {
         if (side === 'away') {
-            const start = 22, end = 45;
+            const start = 24, end = 46;
             if (total <= 1) return (start + end) / 2;
             return start + index * (end - start) / (total - 1);
         }
-        const start = 78, end = 55;
+        const start = 76, end = 54;
         if (total <= 1) return (start + end) / 2;
         return start - index * (start - end) / (total - 1);
     }
@@ -377,7 +377,7 @@
         // الحارس أولاً ثم الصفوف — نفس ترتيب خانات المحرر
         let html = '';
         const gk = lineup && lineup.gk ? Store.player(lineup.gk) : null;
-        html += markerHTML(gk, 50, 92, 'home');
+        html += markerHTML(gk, 50, 89, 'home');
         const rows = (lineup && lineup.rows) || [];
         rows.forEach((row, ri) => {
             row.players.forEach((pid, pi) => {
@@ -408,7 +408,7 @@
                 });
             });
             const gk = lineup.gk ? Store.player(lineup.gk) : null;
-            out += markerHTML(gk, 50, side === 'away' ? 8 : 92, side);
+            out += markerHTML(gk, 50, side === 'away' ? 10 : 90, side);
             return out;
         };
         return '<div class="pitch ' + (opts.cls || '') + '" style="' + (opts.height ? '--pitch-h:' + opts.height + 'px' : '') + '">' +
